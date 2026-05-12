@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CarbonIQ — Your Results</title>
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <a href="/" style="text-decoration:none;display:flex;align-items:center;gap:.5rem;">
+      <span class="brand-icon">🌍</span><span class="brand-name">CarbonIQ</span>
+    </a>
+  </div>
+  <div class="nav-links">
+    <a href="/calculator" class="nav-link">Recalculate</a>
+    <a href="/leaderboard" class="nav-link">Leaderboard</a>
+  </div>
+</nav>
+
+<main class="dashboard-page">
+  <div id="noResults" class="no-results hidden">
+    <h2>No results yet</h2>
+    <p>Complete the calculator to see your dashboard.</p>
+    <a href="/calculator" class="btn btn-primary">Go to Calculator →</a>
+  </div>
+
+  <div id="dashboardContent">
+    <!-- ── HERO SCORE ── -->
+    <section class="score-section">
+      <div class="score-card">
+        <div class="score-label">Your Daily CO₂</div>
+        <div class="score-value" id="dailyCO2">—</div>
+        <div class="score-unit">kg CO₂e / day</div>
+        <div class="risk-badge" id="riskBadge">Calculating...</div>
+      </div>
+      <div class="score-detail-grid">
+        <div class="score-detail">
+          <span class="detail-num" id="monthlyCO2">—</span>
+          <span class="detail-label">kg / Month</span>
+        </div>
+        <div class="score-detail highlight">
+          <span class="detail-num" id="yearlyCO2">—</span>
+          <span class="detail-label">kg / Year</span>
+        </div>
+        <div class="score-detail">
+          <span class="detail-num" id="percentile">—</span>
+          <span class="detail-label">Percentile</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CHARTS ROW ── -->
+    <section class="charts-section">
+      <div class="chart-card">
+        <h3>Breakdown by Category</h3>
+        <div class="chart-wrap">
+          <canvas id="breakdownChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>vs. Global Benchmarks (kg/year)</h3>
+        <div class="chart-wrap">
+          <canvas id="benchmarkChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CATEGORY BARS ── -->
+    <section class="category-bars-section">
+      <h3>Emission Sources</h3>
+      <div id="categoryBars" class="category-bars"></div>
+    </section>
+
+    <!-- ── AI RECOMMENDATIONS ── -->
+    <section class="recommendations-section">
+      <div class="rec-header">
+        <div>
+          <h3>🤖 AI Recommendations</h3>
+          <p>Personalized suggestions from Claude AI to reduce your footprint</p>
+        </div>
+        <button class="btn btn-primary" id="loadRecsBtn" onclick="loadRecommendations()">
+          Generate AI Advice
+        </button>
+      </div>
+      <div id="recLoading" class="hidden rec-loading">
+        <div class="spinner small"></div>
+        <span>Claude AI is analyzing your footprint...</span>
+      </div>
+      <div id="recGrid" class="rec-grid"></div>
+    </section>
+
+    <!-- ── ACTIONS ── -->
+    <div class="dash-actions">
+      <a href="/calculator" class="btn btn-outline">Recalculate →</a>
+      <a href="/leaderboard" class="btn btn-ghost">View Leaderboard</a>
+      <button class="btn btn-ghost" onclick="window.print()">📄 Export PDF</button>
+    </div>
+  </div>
+</main>
+
+<script src="/static/js/main.js"></script>
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

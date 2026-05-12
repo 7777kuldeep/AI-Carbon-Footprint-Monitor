@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CarbonIQ — Calculator</title>
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <a href="/" style="text-decoration:none;display:flex;align-items:center;gap:.5rem;">
+      <span class="brand-icon">🌍</span>
+      <span class="brand-name">CarbonIQ</span>
+    </a>
+  </div>
+  <div class="nav-links">
+    <a href="/leaderboard" class="nav-link">Leaderboard</a>
+    <div id="navAuthLinks"></div>
+  </div>
+</nav>
+
+<main class="calc-page">
+  <!-- Progress bar -->
+  <div class="calc-progress">
+    <div class="progress-steps">
+      <div class="prog-step active" data-step="1">1. Transport</div>
+      <div class="prog-step" data-step="2">2. Energy</div>
+      <div class="prog-step" data-step="3">3. Food</div>
+      <div class="prog-step" data-step="4">4. Lifestyle</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:25%"></div></div>
+  </div>
+
+  <div class="calc-container">
+    <form id="carbonForm">
+
+      <!-- ── STEP 1: Transport ── -->
+      <div class="calc-step active" id="step1">
+        <div class="step-header">
+          <span class="step-emoji">🚗</span>
+          <div>
+            <h2>Transport</h2>
+            <p>How do you get around?</p>
+          </div>
+        </div>
+
+        <div id="transportList">
+          <div class="transport-entry card-input">
+            <div class="input-row">
+              <div class="form-group">
+                <label>Vehicle Type</label>
+                <select name="transport_mode_0" class="form-select">
+                  <option value="petrol_car">🚗 Petrol Car</option>
+                  <option value="diesel_car">🚙 Diesel Car</option>
+                  <option value="electric_car">⚡ Electric Car</option>
+                  <option value="motorcycle">🏍️ Motorcycle / Scooter</option>
+                  <option value="auto_rickshaw">🛺 Auto Rickshaw</option>
+                  <option value="bus">🚌 Public Bus</option>
+                  <option value="metro_train">🚇 Metro / Train</option>
+                  <option value="bicycle">🚲 Bicycle</option>
+                  <option value="walking">🚶 Walking</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Distance (km)</label>
+                <input type="number" name="transport_dist_0" class="form-input" placeholder="25" min="0" />
+              </div>
+              <div class="form-group">
+                <label>Frequency</label>
+                <select name="transport_freq_0" class="form-select">
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-ghost add-btn" onclick="addTransport()">
+          + Add another vehicle/route
+        </button>
+      </div>
+
+      <!-- ── STEP 2: Energy ── -->
+      <div class="calc-step hidden" id="step2">
+        <div class="step-header">
+          <span class="step-emoji">⚡</span>
+          <div>
+            <h2>Home Energy</h2>
+            <p>Your electricity and appliance usage</p>
+          </div>
+        </div>
+
+        <div class="appliances-grid">
+          <div class="appliance-card" data-appl="ac">
+            <div class="appl-header">
+              <span>❄️ Air Conditioner</span>
+              <label class="toggle">
+                <input type="checkbox" name="appl_ac" onchange="toggleAppliance('ac', this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="appl-controls hidden" id="ctrl_ac">
+              <div class="input-row">
+                <div class="form-group">
+                  <label>Hours/Day</label>
+                  <input type="number" name="appl_ac_hours" class="form-input small" value="6" min="0" max="24" />
+                </div>
+                <div class="form-group">
+                  <label>Quantity</label>
+                  <input type="number" name="appl_ac_qty" class="form-input small" value="1" min="1" max="10" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="appliance-card" data-appl="fan">
+            <div class="appl-header">
+              <span>🌀 Ceiling Fan</span>
+              <label class="toggle">
+                <input type="checkbox" name="appl_fan" onchange="toggleAppliance('fan', this.checked)" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="appl-controls" id="ctrl_fan">
+              <div class="input-row">
+                <div class="form-group">
+                  <label>Hours/Day</label>
+                  <input type="number" name="appl_fan_hours" class="form-input small" value="10" min="0" max="24" />
+                </div>
+                <div class="form-group">
+                  <label>Quantity</label>
+                  <input type="number" name="appl_fan_qty" class="form-input small" value="3" min="1" max="20" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="appliance-card" data-appl="refrigerator">
+            <div class="appl-header">
+              <span>🧊 Refrigerator</span>
+              <label class="toggle">
+                <input type="checkbox" name="appl_refrigerator" onchange="toggleAppliance('refrigerator', this.checked)" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="appl-controls" id="ctrl_refrigerator">
+              <div class="input-row">
+                <div class="form-group">
+                  <label>Hours/Day</label>
+                  <input type="number" name="appl_refrigerator_hours" class="form-input small" value="24" min="0" max="24" />
+                </div>
+                <div class="form-group">
+                  <label>Quantity</label>
+                  <input type="number" name="appl_refrigerator_qty" class="form-input small" value="1" min="1" max="5" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="appliance-card" data-appl="washing_machine">
+            <div class="appl-header">
+              <span>🫧 Washing Machine</span>
+              <label class="toggle">
+                <input type="checkbox" name="appl_washing_machine" onchange="toggleAppliance('washing_machine', this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="appl-controls hidden" id="ctrl_washing_machine">
+              <div class="input-row">
+                <div class="form-group">
+                  <label>Hours/Day</label>
+                  <input type="number" name="appl_washing_machine_hours" class="form-input small" value="1" min="0" max="24" />
+                </div>
+                <div class="form-group">
+                  <label>Quantity</label>
+                  <input type="number" name="appl_washing_machine_qty" class="form-input small" value="1" min="1" max="3" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="appliance-card" data-appl="tv">
+            <div class="appl-header">
+              <span>📺 Television</span>
+              <label class="toggle">
+                <input type="checkbox" name="appl_tv" onchange="toggleAppliance('tv', this.checked)" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="appl-controls" id="ctrl_tv">
+              <div class="input-row">
+                <div class="form-group">
+                  <label>Hours/Day</label>
+                  <input type="number" name="appl_tv_hours" class="form-input small" value="4" min="0" max="24" />
+                </div>
+                <div class="form-group">
+                  <label>Quantity</label>
+                  <input type="number" name="appl_tv_qty" class="form-input small" value="1" min="1" max="5" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="appliance-card" data-appl="computer">
+            <div class="appl-header">
+              <span>💻 Computer/Laptop</span>
+              <label class="toggle">
+                <input type="checkbox" name="appl_computer" onchange="toggleAppliance('computer', this.checked)" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="appl-controls" id="ctrl_computer">
+              <div class="input-row">
+                <div class="form-group">
+                  <label>Hours/Day</label>
+                  <input type="number" name="appl_computer_hours" class="form-input small" value="8" min="0" max="24" />
+                </div>
+                <div class="form-group">
+                  <label>Quantity</label>
+                  <input type="number" name="appl_computer_qty" class="form-input small" value="1" min="1" max="5" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="appliance-card" data-appl="water_heater">
+            <div class="appl-header">
+              <span>🚿 Water Heater (Geyser)</span>
+              <label class="toggle">
+                <input type="checkbox" name="appl_water_heater" onchange="toggleAppliance('water_heater', this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="appl-controls hidden" id="ctrl_water_heater">
+              <div class="input-row">
+                <div class="form-group">
+                  <label>Hours/Day</label>
+                  <input type="number" name="appl_water_heater_hours" class="form-input small" value="1" min="0" max="24" />
+                </div>
+                <div class="form-group">
+                  <label>Quantity</label>
+                  <input type="number" name="appl_water_heater_qty" class="form-input small" value="1" min="1" max="3" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="appliance-card appl-kwh">
+            <div class="appl-header">
+              <span>📊 Or: Enter Monthly kWh</span>
+            </div>
+            <div class="appl-controls">
+              <div class="form-group">
+                <label>Monthly Electricity (kWh from bill)</label>
+                <input type="number" name="monthly_kwh" id="monthlyKwh" class="form-input" placeholder="150" min="0" />
+                <span class="hint">Check your electricity bill. Overrides appliance calculation if > 0.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 3: Food ── -->
+      <div class="calc-step hidden" id="step3">
+        <div class="step-header">
+          <span class="step-emoji">🥗</span>
+          <div>
+            <h2>Food Habits</h2>
+            <p>Diet is a major factor in carbon footprint</p>
+          </div>
+        </div>
+
+        <div class="food-grid">
+          <label class="food-card">
+            <input type="radio" name="food_habit" value="vegan" />
+            <div class="food-content">
+              <span class="food-icon">🌱</span>
+              <h4>Vegan</h4>
+              <p>Plant-based diet, no animal products</p>
+              <span class="co2-tag">~1.5 kg CO₂/day</span>
+            </div>
+          </label>
+          <label class="food-card">
+            <input type="radio" name="food_habit" value="vegetarian" checked />
+            <div class="food-content">
+              <span class="food-icon">🥦</span>
+              <h4>Vegetarian</h4>
+              <p>No meat, includes dairy & eggs</p>
+              <span class="co2-tag">~2.5 kg CO₂/day</span>
+            </div>
+          </label>
+          <label class="food-card">
+            <input type="radio" name="food_habit" value="pescatarian" />
+            <div class="food-content">
+              <span class="food-icon">🐟</span>
+              <h4>Pescatarian</h4>
+              <p>Fish & seafood, no land meat</p>
+              <span class="co2-tag">~3.4 kg CO₂/day</span>
+            </div>
+          </label>
+          <label class="food-card">
+            <input type="radio" name="food_habit" value="non_vegetarian_low" />
+            <div class="food-content">
+              <span class="food-icon">🍗</span>
+              <h4>Meat (Occasional)</h4>
+              <p>Meat less than 3 times per week</p>
+              <span class="co2-tag">~4.7 kg CO₂/day</span>
+            </div>
+          </label>
+          <label class="food-card">
+            <input type="radio" name="food_habit" value="non_vegetarian_high" />
+            <div class="food-content">
+              <span class="food-icon">🥩</span>
+              <h4>Meat (Frequent)</h4>
+              <p>Meat daily, including beef/pork</p>
+              <span class="co2-tag">~7.2 kg CO₂/day</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- ── STEP 4: Lifestyle ── -->
+      <div class="calc-step hidden" id="step4">
+        <div class="step-header">
+          <span class="step-emoji">🛍️</span>
+          <div>
+            <h2>Daily Activities</h2>
+            <p>Shopping, digital habits, and waste</p>
+          </div>
+        </div>
+
+        <div class="lifestyle-section">
+          <h3>📺 Online Streaming</h3>
+          <div class="option-pills" data-key="streaming">
+            <label class="pill"><input type="radio" name="streaming" value="light" checked/><span>Light (< 2hrs/day)</span></label>
+            <label class="pill"><input type="radio" name="streaming" value="heavy"/><span>Heavy (4+ hrs/day)</span></label>
+          </div>
+        </div>
+
+        <div class="lifestyle-section">
+          <h3>🛍️ Shopping Habits</h3>
+          <div class="option-pills" data-key="shopping">
+            <label class="pill"><input type="radio" name="shopping" value="minimal"/><span>Minimal — buy only necessities</span></label>
+            <label class="pill"><input type="radio" name="shopping" value="moderate" checked/><span>Moderate — occasional purchases</span></label>
+            <label class="pill"><input type="radio" name="shopping" value="frequent"/><span>Frequent — regular online/offline shopping</span></label>
+          </div>
+        </div>
+
+        <div class="lifestyle-section">
+          <h3>♻️ Waste & Recycling</h3>
+          <div class="option-pills" data-key="waste">
+            <label class="pill"><input type="radio" name="waste" value="low"/><span>Good — compost & recycle regularly</span></label>
+            <label class="pill"><input type="radio" name="waste" value="medium" checked/><span>Medium — some recycling</span></label>
+            <label class="pill"><input type="radio" name="waste" value="high"/><span>High — no recycling</span></label>
+          </div>
+        </div>
+
+        <div class="lifestyle-section">
+          <h3>🔥 Cooking Fuel</h3>
+          <div class="option-pills">
+            <label class="pill"><input type="radio" name="cooking" value="lpg_cooking_low" checked/><span>LPG — moderate use</span></label>
+            <label class="pill"><input type="radio" name="cooking" value="lpg_cooking_high"/><span>LPG — heavy use</span></label>
+            <label class="pill"><input type="radio" name="cooking" value="induction_cooking"/><span>Induction / Electric</span></label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Your Name / Username (for leaderboard)</label>
+          <input type="text" id="submitterName" class="form-input" placeholder="eco_warrior or leave blank" />
+        </div>
+      </div>
+
+      <!-- ── NAVIGATION ── -->
+      <div class="calc-nav">
+        <button type="button" class="btn btn-ghost" id="prevBtn" onclick="prevStep()" style="display:none">← Back</button>
+        <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">Next →</button>
+        <button type="button" class="btn btn-hero hidden" id="submitBtn" onclick="submitForm()">
+          Calculate My Footprint 🌍
+        </button>
+      </div>
+
+    </form>
+  </div>
+</main>
+
+<div class="loading-overlay hidden" id="loadingOverlay">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <p id="loadingText">Calculating your carbon footprint...</p>
+  </div>
+</div>
+
+<script src="/static/js/main.js"></script>
+<script src="/static/js/calculator.js"></script>
+</body>
+</html>
